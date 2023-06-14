@@ -14,16 +14,13 @@ function _node_version_activate --on-event _node_version_cwd
       echo (n auto)
     # fall back to Nix
     else if type -q nix || type -q nix-shell
-      # TODO: actually get only the major version
-      set major_version_from_file "$version_from_file"
+      set major_version_from_file (_node_version_get_major_version "$version_from_file")
       set package_name "nodejs_$major_version_from_file"
-      # BUG: this causes an infinite loop of entering new nix-shells
-      # Look in to using $SHLVL maybe?
-      # https://github.com/NixOS/nix/issues/6677
-      # if [ test -n "$IN_NIX_SHELL" ] or test "$SHLVL" -lte 2
-      # Maybe a better strategy is to check if the node version is acceptable
-      set actual_major_version = (node --version | cut -c2- | cut -d '.' -f1)
+
+      # Check if the current node version is acceptable
+      set actual_major_version = (_node_version_get_major_version (node --version))
       if test "$actual_major_version" -neq "$major_version_from_file"
+        # use the new `nix shell` if available
         if type -q nix
           nix shell "nixpkgs#$package_name"
         else if type -q nix-shell
