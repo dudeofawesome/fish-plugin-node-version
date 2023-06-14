@@ -18,12 +18,19 @@ function _node_version_activate --on-event _node_version_cwd
       set major_version_from_file "$version_from_file"
       set package_name "nodejs_$major_version_from_file"
       # BUG: this causes an infinite loop of entering new nix-shells
-      if type -q nix
-        # nix shell "nixpkgs#$package_name"
-      else if type -q nix-shell
-        # nix-shell -p "$package_name"
+      # Look in to using $SHLVL maybe?
+      # https://github.com/NixOS/nix/issues/6677
+      # if [ test -n "$IN_NIX_SHELL" ] or test "$SHLVL" -lte 2
+      # Maybe a better strategy is to check if the node version is acceptable
+      set actual_major_version = (node --version | cut -c2- | cut -d '.' -f1)
+      if test "$actual_major_version" -neq "$major_version_from_file"
+        if type -q nix
+          nix shell "nixpkgs#$package_name"
+        else if type -q nix-shell
+          nix-shell -p "$package_name"
+        end
+        echo "Using Node $(node --version)"
       end
-      echo "Using Node $(node --version)"
     else
       echo "No Node version management system found! Using $(node --version)."
     end
