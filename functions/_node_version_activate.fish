@@ -15,15 +15,19 @@ function _node_version_activate --on-event _node_version_cwd
     # fall back to Nix
     else if type -q nix || type -q nix-shell
       set major_version_from_file (_node_version_get_major_version "$version_from_file")
+      echo "Installing $major_version_from_file using nix or nix-shell"
       set package_name "nodejs_$major_version_from_file"
 
       # Check if the current node version is acceptable
       set actual_major_version = (_node_version_get_major_version (node --version))
+      echo "Actually installing $actual_major_version"
       if test "$actual_major_version" -neq "$major_version_from_file"
         # use the new `nix shell` if available
         if type -q nix
+          echo "Using nix shell"
           nix shell "nixpkgs#$package_name"
         else if type -q nix-shell
+          echo "Using nix-shell"
           nix-shell -p "$package_name"
         end
         echo "Using Node $(node --version)"
