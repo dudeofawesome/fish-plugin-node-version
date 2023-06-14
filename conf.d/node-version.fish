@@ -1,5 +1,5 @@
 # Set current working directory history
-set --global _node_version_old_cwd (cwd)
+set --global _node_version_old_cwd (pwd)
 
 # Attach event handlers
 functions --query \
