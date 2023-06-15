@@ -12,3 +12,15 @@ $ fisher install dudeofawesome/fish-plugin-node-version
 
 1. `cd` into a directory with a `.nvmrc` or `.node-version` file in it.
 1. Watch your `node` version magically change to the correct version!
+
+## Development
+
+### Install dependencies
+
+1. `$ fisher install jorgebucaran/fishtape`
+
+### Testing
+
+```sh
+$ fishtape test/*.fish
+```
