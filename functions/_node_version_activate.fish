@@ -2,8 +2,16 @@
 function _node_version_activate --on-event _node_version_cwd
     echo "changed working dir to $(pwd)"
 
-    if test -f '.nvmrc' || test -f '.node-version'
+    if test -f '.nvmrc' || test -f '.node-version' || begin
+            test -f 'package.json'; and [ "$(jq --raw-output '.engines.node' 'package.json')" != null ]
+        end
+
         set version_from_file ""
+        if begin
+                test -f 'package.json'; and [ "$(jq --raw-output '.engines.node' 'package.json')" != null ]
+            end
+            set version_from_file "$(jq --raw-output '.engines.node' 'package.json')"
+        end
         if test -f '.nvmrc'
             set version_from_file "$(cat '.nvmrc')"
         end
@@ -39,9 +47,5 @@ function _node_version_activate --on-event _node_version_cwd
         else
             echo "No Node version management system found! Using $(node --version)."
         end
-    else if begin
-            test -f 'package.json'; and [ "$(jq --raw-output '.engines.node' 'package.json')" != null ]
-        end
-        echo "Using version from package.json!"
     end
 end
