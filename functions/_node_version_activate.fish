@@ -31,7 +31,7 @@ function _node_version_activate --on-event _node_version_cwd
             set package_name "nodejs_$major_version_from_file"
 
             # Check if the current node version is acceptable
-            set actual_major_version = (_node_version_get_major_version (node --version))
+            set actual_major_version (_node_version_get_major_version (node --version))
             echo "Actually installing $actual_major_version"
             if test ! "$actual_major_version" -eq "$major_version_from_file"
                 # use the new `nix shell` if available
