@@ -39,5 +39,9 @@ function _node_version_activate --on-event _node_version_cwd
         else
             echo "No Node version management system found! Using $(node --version)."
         end
+    else if begin
+            test -f 'package.json'; and [ "$(jq --raw-output '.engines.node' 'package.json')" != null ]
+        end
+        echo "Using version from package.json!"
     end
 end
